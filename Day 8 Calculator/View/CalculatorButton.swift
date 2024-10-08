@@ -30,7 +30,7 @@ struct CalculatorButton: View {
                         width: buttonSize(for: size, spanWidth: buttonSpec.type.spanWidth),
                         height: buttonSize(for: size, spanWidth: 1)
                     )
-                Text(buttonSpec.symbol.rawValue)
+                Text(symbolString)
                     .font(displayFont(for: size))
                     .foregroundStyle(foregroundColor)
             }
@@ -64,5 +64,13 @@ struct CalculatorButton: View {
     
     private var foregroundColor: Color {
         buttonSpec.symbol == calculatorViewModel.activeSymbol ? buttonSpec.type.backgroundColor : buttonSpec.type.foregroundColor
+    }
+    
+    private var symbolString: String {
+        if buttonSpec.symbol == .clear {
+            calculatorViewModel.clearSymbol
+        } else {
+            buttonSpec.symbol.rawValue
+        }
     }
 }

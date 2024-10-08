@@ -44,7 +44,7 @@ struct CalculatorBrain {
 
     // MARK: - Properties
 
-    var accumulator: Double? = 0
+    private(set) var accumulator: Double? = 0
     private var pendingOperation: PendingBinaryOperation?
     
     var pendingLeftOperand: Double? {

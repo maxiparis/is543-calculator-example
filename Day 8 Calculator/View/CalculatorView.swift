@@ -21,35 +21,49 @@ struct CalculatorView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                Rectangle()
-                    .fill(.black)
-                    .ignoresSafeArea(.all)
                 VStack(alignment: .trailing, spacing: DrawingConstants.buttonSpacing) {
-                    Toggle(
-                        "Play sound",
-                        isOn: $calculatorViewModel.preferences.soundIsEnabled
-                    )
-                        .foregroundStyle(.white)
-                    Spacer()
-                    Text(calculatorViewModel.displayText)
-                        .font(.system(size: Constants.displayFontSize, weight: .thin))
-                        .foregroundStyle(.white)
-                        .padding(.trailing, DrawingConstants.buttonSpacing)
-                    LazyVGrid(columns: gridItems, alignment: .leading, spacing: DrawingConstants.buttonSpacing) {
-                        ForEach(buttonSpecs, id: \.symbol.rawValue) { buttonSpec in
-                            if buttonSpec.symbol == .placeholder {
-                                Text("")
-                            } else {
-                                CalculatorButton(
-                                    buttonSpec: buttonSpec,
-                                    size: geometry.size,
-                                    calculatorViewModel: calculatorViewModel
-                                )
-                            }
-                        }
-                    }
+                    accumulatorBody
+                    buttonGrid(for: geometry)
                 }
-                .padding()
+                .padding(.leading, DrawingConstants.buttonSpacing)
+            }
+            .background(.black)
+        }
+    }
+    
+    var accumulatorBody: some View {
+        GeometryReader { geometry in
+            VStack(alignment: .trailing) {
+                Toggle(
+                    "Play sound",
+                    isOn: $calculatorViewModel.preferences.soundIsEnabled
+                )
+                    .foregroundStyle(.white)
+                Spacer()
+                Text(calculatorViewModel.displayText)
+                    .font(
+                        systemFont(for: calculatorViewModel.displayText,
+                                   thatFits: geometry.size.width - DrawingConstants.buttonSpacing * 2,
+                                   desiredSize: Constants.displayFontSize)
+                    )
+                    .foregroundStyle(.white)
+                    .padding(.trailing, DrawingConstants.buttonSpacing)
+            }
+        }
+    }
+    
+    func buttonGrid(for geometry: GeometryProxy) -> some View {
+        LazyVGrid(columns: gridItems, alignment: .leading, spacing: DrawingConstants.buttonSpacing) {
+            ForEach(buttonSpecs, id: \.symbol.rawValue) { buttonSpec in
+                if buttonSpec.symbol == .placeholder {
+                    Text("")
+                } else {
+                    CalculatorButton(
+                        buttonSpec: buttonSpec,
+                        size: geometry.size,
+                        calculatorViewModel: calculatorViewModel
+                    )
+                }
             }
         }
     }
