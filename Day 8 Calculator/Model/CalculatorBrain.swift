@@ -46,6 +46,14 @@ struct CalculatorBrain {
 
     var accumulator: Double? = 0
     private var pendingOperation: PendingBinaryOperation?
+    
+    var pendingLeftOperand: Double? {
+        pendingOperation?.leftOperand
+    }
+    
+    var pendingSymbol: OperationSymbol? {
+        pendingOperation?.symbol
+    }
 
     // MARK: - Helpers
 
@@ -65,10 +73,20 @@ struct CalculatorBrain {
         }
 
         switch operation {
-            case .binary:
-                break
-            case .unary:
-                break
+            case .binary(let function):
+                performPendingOperation()
+                if let accumulator {
+                    pendingOperation = PendingBinaryOperation(
+                        calculate: function,
+                        leftOperand: accumulator,
+                        symbol: symbol
+                    )
+                    clearAccumulator()
+                }
+            case .unary(let function):
+                if let accumulator {
+                    self.accumulator = function(accumulator)
+                }
             case .calculate:
                 performPendingOperation()
         }
